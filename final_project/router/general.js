@@ -25,14 +25,6 @@ public_users.get('/',function (req, res) {
   res.send(JSON.stringify(books,null,4));
 });
 
-axios.get('http://localhost:5000/')
-  .then(response => {
-    console.log('Books list:', response.data);  // Full list of books from booksdb.js
-  })
-  .catch(error => {
-    console.error('Error fetching books:', error.message);
-  });
-
 // Get book details based on ISBN
 //public_users.get('/isbn/:isbn',function (req, res) {
 //  const isbn = req.params.isbn;
@@ -40,11 +32,11 @@ axios.get('http://localhost:5000/')
 //  if (book) {
 //    return res.status(200).json(book);
 //  } else {
-//   return res.status(404).json({message: `Book with ISBN ${isbn} not found`});
+//    return res.status(404).json({message: `Book with ISBN ${isbn} not found`});
 //  }
 // });
 
-public_users.get('/isbn/:isbn', function (req, res) {
+ public_users.get('/isbn/:isbn', function (req, res) {
   const isbn = req.params.isbn;
   const bookPromise = new Promise((resolve, reject) => {
     const book = books[isbn];
@@ -63,7 +55,7 @@ public_users.get('/isbn/:isbn', function (req, res) {
       res.status(404).json({ message: error.message });
     });
 });
- 
+  
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
   const author = req.params.author;
