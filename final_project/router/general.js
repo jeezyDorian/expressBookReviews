@@ -21,8 +21,26 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  res.send(JSON.stringify(books,null,4));
+//public_users.get('/',function (req, res) {
+//  res.send(JSON.stringify(books,null,4));
+//});
+
+public_users.get('/', function (req, res) {
+  const booksPromise = new Promise((resolve, reject) => {
+    if (books && Object.keys(books).length > 0) {
+      resolve(books);
+    } else {
+      reject(new Error('There are no books to review'));
+    }
+  });
+
+  booksPromise
+    .then(booksData => {
+      res.send(JSON.stringify(booksData, null, 4));
+    })
+    .catch(error => {
+      res.status(404).json({ message: error.message });
+    });
 });
 
 // Get book details based on ISBN
