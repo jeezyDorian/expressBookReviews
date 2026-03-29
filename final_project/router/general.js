@@ -75,22 +75,50 @@ public_users.get('/', function (req, res) {
 });
   
 // Get book details based on author
+//public_users.get('/author/:author', function (req, res) {
+//  const author = req.params.author;
+//  const matchingBooks = [];
+//  const bookKeys = Object.keys(books);
+//  
+//  bookKeys.forEach(key => {
+//      if (books[key].author.toLowerCase() === author.toLowerCase()) {
+//      matchingBooks.push(books[key]);
+//    }
+//  });
+//  
+//  if (matchingBooks.length > 0) {
+//    return res.status(200).json(matchingBooks);
+//  } else {
+//    return res.status(404).json({message: `No books found by author ${author}`});
+//  }
+//});
+
 public_users.get('/author/:author', function (req, res) {
   const author = req.params.author;
-  const matchingBooks = [];
-  const bookKeys = Object.keys(books);
-  
-  bookKeys.forEach(key => {
+  const authorBooksPromise = new Promise((resolve, reject) => {
+    const matchingBooks = [];
+    const bookKeys = Object.keys(books);
+    
+    bookKeys.forEach(key => {
       if (books[key].author.toLowerCase() === author.toLowerCase()) {
-      matchingBooks.push(books[key]);
+        matchingBooks.push(books[key]);
+      }
+    });
+    
+    if (matchingBooks.length > 0) {
+      resolve(matchingBooks);
+    } else {
+      reject(new Error(`No books found by author ${author}`));
     }
   });
   
-  if (matchingBooks.length > 0) {
-    return res.status(200).json(matchingBooks);
-  } else {
-    return res.status(404).json({message: `No books found by author ${author}`});
-  }
+  authorBooksPromise
+    .then(matchingBooks => {
+      res.status(200).json(matchingBooks);
+    })
+    .catch(error => {
+      res.status(404).json({ message: error.message });
+    });
 });
 
 // Get all books based on title
