@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -20,8 +21,26 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  res.send(JSON.stringify(books,null,4));
+
+//public_users.get('/',function (req, res) {
+//  res.send(JSON.stringify(books,null,4));
+//});
+
+public_users.get('/', (req, res) => {
+  axios.get('API_URL_HERE') // Replace with actual API URL
+    .then(response => {
+      const books = response.data.slice(0, 10).map(post => ({
+        id: post.id,
+        title: post.title,
+        author: post.author,
+        reviews: {} // Assuming reviews are not provided by the API, initialize as empty object
+      }));
+      return res.status(200).json(books);
+    })
+    .catch(error => {
+      console.error('Error fetching books:', error.message);
+      return res.status(500).json({ message: 'Failed to fetch books' });
+    });
 });
 
 // Get book details based on ISBN
