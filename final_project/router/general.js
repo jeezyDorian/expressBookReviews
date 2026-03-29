@@ -25,6 +25,14 @@ public_users.get('/',function (req, res) {
   res.send(JSON.stringify(books,null,4));
 });
 
+axios.get('http://localhost:5000/')
+  .then(response => {
+    console.log('Books list:', response.data);  // Full list of books from booksdb.js
+  })
+  .catch(error => {
+    console.error('Error fetching books:', error.message);
+  });
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
