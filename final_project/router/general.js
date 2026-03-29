@@ -20,27 +20,16 @@ public_users.post("/register", (req,res) => {
     return res.status(404).json({message: "Unable to register user."});
 });
 
-// Get the book list available in the shop
-//public_users.get('/',function (req, res) {
-//  res.send(JSON.stringify(books,null,4));
-//});
-
+// Get book list available in the shop
 public_users.get('/', function (req, res) {
-  const booksPromise = new Promise((resolve, reject) => {
-    if (books && Object.keys(books).length > 0) {
-      resolve(books);
-    } else {
-      reject(new Error('There are no books to review'));
-    }
+  const promise = new Promise((resolve, reject) => {
+    axios.get('http://localhost:5000/')
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
   });
-
-  booksPromise
-    .then(booksData => {
-      res.send(JSON.stringify(booksData, null, 4));
-    })
-    .catch(error => {
-      res.status(404).json({ message: error.message });
-    });
+  promise
+    .then(data => res.status(200).json(data))
+    .catch(error => res.status(500).json({ message: "Error fetching book list", error: error.message }));
 });
 
 // Get book details based on ISBN
