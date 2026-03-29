@@ -61,61 +61,26 @@ public_users.get('/author/:author', function (req, res) {
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
   const title = req.params.title;
-  const matchingBooks = [];
-  const bookKeys = Object.keys(books);
-  
-  bookKeys.forEach(key => {
-    if (books[key].title.toLowerCase() === title.toLowerCase()) {
-      matchingBooks.push(books[key]);
-    }
+  const promise = new Promise((resolve, reject) => {
+    axios.get(`http://localhost:5000/title/${title}`)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
   });
-  
-  if (matchingBooks.length > 0) {
-    return res.status(200).json(matchingBooks);
-  } else {
-    return res.status(404).json({message: `No books found with title ${title}`});
-  }
+  promise
+    .then(data => res.status(200).json(data))
+    .catch(error => res.status(404).json({ message: `No books found with title ${title}`, error: error.message }));
 });
 
 //  Get book review
-//public_users.get('/review/:isbn', function (req, res) {
-//  const isbn = req.params.isbn;
-//  const book = books[isbn];
+public_users.get('/review/:isbn', function (req, res) {
+  const isbn = req.params.isbn;
+  const book = books[isbn];
   
-//  if (book && book.reviews) {
-//    return res.status(200).json(book.reviews);
-//  } else {
-//    return res.status(404).json({message: `Reviews not found for ISBN ${isbn}`});
-//  }
-//});
-
-public_users.get('/title/:title', function (req, res) {
-  const title = req.params.title;
-  
-  const titleBooksPromise = new Promise((resolve, reject) => {
-    const matchingBooks = [];
-    const bookKeys = Object.keys(books);
-    
-    bookKeys.forEach(key => {
-      if (books[key].title.toLowerCase() === title.toLowerCase()) {
-        matchingBooks.push(books[key]);
-      }
-    });
-    
-    if (matchingBooks.length > 0) {
-      resolve(matchingBooks);
-    } else {
-      reject(new Error(`No books found with title ${title}`));
-    }
+  if (book && book.reviews) {
+    return res.status(200).json(book.reviews);
+  } else {
+    return res.status(404).json({message: `Reviews not found for ISBN ${isbn}`});
+  }
   });
-  
-  titleBooksPromise
-    .then(matchingBooks => {
-      res.status(200).json(matchingBooks);
-    })
-    .catch(error => {
-      res.status(404).json({ message: error.message });
-    });
-});
 
 module.exports.general = public_users;
