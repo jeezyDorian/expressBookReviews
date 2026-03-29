@@ -26,22 +26,6 @@ public_users.post("/register", (req,res) => {
 //  res.send(JSON.stringify(books,null,4));
 //});
 
-public_users.get('/', (req, res) => {
-  axios.get('API_URL_HERE') // Replace with actual API URL
-    .then(response => {
-      const books = response.data.slice(0, 10).map(post => ({
-        id: post.id,
-        title: post.title,
-        author: post.author,
-        reviews: {} // Assuming reviews are not provided by the API, initialize as empty object
-      }));
-      return res.status(200).json(books);
-    })
-    .catch(error => {
-      console.error('Error fetching books:', error.message);
-      return res.status(500).json({ message: 'Failed to fetch books' });
-    });
-});
 
 // Get book details based on ISBN
 //public_users.get('/isbn/:isbn',function (req, res) {
